@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Resume Analyzer</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            color: #1e293b;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            width: 100%;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .badge {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* HERO */
+
+        .hero {
+            text-align: center;
+            padding: 55px 20px 35px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .hero h1 span {
+            color: #4f46e5;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: auto;
+            color: #64748b;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        /* MAIN CARD */
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 20px auto 60px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin-bottom: 25px;
+            color: #111827;
+        }
+
+        /* FORM */
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .upload-box {
+            border: 2px dashed #c7d2fe;
+            border-radius: 14px;
+            padding: 25px;
+            text-align: center;
+            background: #f8faff;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dbeafe;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            resize: vertical;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #6366f1;
+        }
+
+        .button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #4f46e5;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #4338ca;
+        }
+
+        /* RESULTS */
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .score-box {
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            background: #eef2ff;
+            margin-bottom: 25px;
+        }
+
+        .score {
+            font-size: 60px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin: 15px 0;
+        }
+
+        .score-box p {
+            color: #64748b;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            padding: 22px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-card h3 {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🤖 ResumeAI
+        </div>
+
+        <div class="badge">
+            AI Powered
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>
+            AI Resume <span>Analyzer</span>
+        </h1>
+
+        <p>
+            Analyze your resume against a job description,
+            discover matching skills, identify missing skills,
+            and understand your resume compatibility.
+        </p>
+
+    </section>
+
+
+    <!-- MAIN -->
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>Analyze Your Resume</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <label>
+                    Upload Resume
+                </label>
+
+                <div class="upload-box">
+
+                    <input
+                        type="file"
+                        name="resume"
+                        accept=".pdf"
+                        required>
+
+                    <p style="margin-top:10px; color:#64748b;">
+                        Upload your resume in PDF format
+                    </p>
+
+                </div>
+
+
+                <label>
+                    Job Description
+                </label>
+
+                <textarea
+                    name="job_description"
+                    placeholder="Paste the job description here..."
+                    required></textarea>
+
+
+                <button class="button" type="submit">
+
+                    🔍 Analyze Resume
+
+                </button>
+
+            </form>
+
+
+            {% if skills %}
+
+            <!-- RESULTS -->
+
+            <div class="results">
+
+                <div class="score-box">
+
+                    <h2>
+                        Resume Match Score
+                    </h2>
+
+                    <div class="score">
+                        {{ score }}%
+                    </div>
+
+                    <p>
+                        Skill match based on the job requirements
+                    </p>
+
+                    <p style="margin-top:12px;">
+                        AI/NLP Similarity:
+                        <strong>{{ ai_score }}%</strong>
+                    </p>
+
+                </div>
+
+
+                <div class="result-grid">
+
+                    <!-- DETECTED -->
+
+                    <div class="result-card">
+
+                        <h3>
+                            🔎 Detected Skills
+                        </h3>
+
+                        <ul>
+
+                            {% for skill in skills %}
+
+                                <li>
+                                    {{ skill|title }}
+                                </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                    </div>
+
+
+                    <!-- MATCHED -->
+
+                    <div class="result-card">
+
+                        <h3>
+                            ✅ Matched Skills
+                        </h3>
+
+                        <ul>
+
+                            {% for skill in matched_skills %}
+
+                                <li>
+                                    {{ skill|title }}
+                                </li>
+
+                            {% empty %}
+
+                                <li>
+                                    No matching skills found.
+                                </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                    </div>
+
+
+                    <!-- MISSING -->
+
+                    <div class="result-card">
+
+                        <h3>
+                            ⚠️ Missing Skills
+                        </h3>
+
+                        <ul>
+
+                            {% for skill in missing_skills %}
+
+                                <li>
+                                    {{ skill|title }}
+                                </li>
+
+                            {% empty %}
+
+                                <li>
+                                    No missing skills 🎉
+                                </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                    </div>
+
+
+                    <!-- SUMMARY -->
+
+                    <div class="result-card">
+
+                        <h3>
+                            📊 Analysis
+                        </h3>
+
+                        <p style="line-height:1.7; color:#64748b;">
+
+                            Your resume has been analyzed using
+                            skill detection and NLP-based text
+                            similarity.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <footer>
+
+        AI Resume Analyzer • Django + Python + NLP
+
+    </footer>
+
+</body>
+
+</html>
